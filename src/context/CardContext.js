@@ -1,9 +1,34 @@
 import React, { createContext,useState } from 'react'
 export const CardContext = createContext();
 
-function CardContextProvider(props) {
 
-    var arr4 = {
+function CardContextProvider(props) {
+    
+
+    const shuffle = (array) => {
+        var currentIndex = array.length, temporaryValue, randomIndex;
+      
+        // While there remain elements to shuffle...
+        while (0 !== currentIndex) {
+      
+          // Pick a remaining element...
+          randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex -= 1;
+      
+    
+          // And swap it with the current element.
+          temporaryValue = array[currentIndex];
+          array[currentIndex] = array[randomIndex];
+          array[randomIndex] = temporaryValue;
+        }
+      
+        return array;
+      }
+      
+      
+      
+
+    const arr4 = {
         cards: [
             { value: "1", id: "1", isclicked: false },
             { value: "7", id: "2", isclicked: false },
@@ -25,8 +50,10 @@ function CardContextProvider(props) {
         isEven: false,
         prev: null,
         initial: true,
-        moves: 20
+        moves: 20,
+        temp : false
     };
+
 
     var arr2 = {
         cards: [
@@ -38,31 +65,76 @@ function CardContextProvider(props) {
         isEven: false,
         prev: null,
         initial: true,
-        moves: 3
+        moves: 3,
+        temp:false
     };
 
-    
 
-    const [Data, setData] = useState({
-        type: '2',
-        data: arr2
-    });
+    console.log("Before shuffling" ,arr2.cards);
+    shuffle(arr2.cards);
+    console.log("After shuffling" ,arr2.cards);
+   
+        var temp2 = [];
+        for(var i=0;i<arr2.cards.length;i++)
+        {
+            temp2.push({...arr2.cards[i]})
+        }
+        console.log(temp2,"temp of initial")
+        const [Data, setData] = useState({
+            type: '2',
+            data: {...arr2, cards:temp2 }
+        });
+    
     
     const handler2 = () =>{
-        setData({type:'2',data:arr2})
+        console.log("Here at handler2")
+            var temp = [];
+            shuffle(arr2.cards);
+            for(var i=0;i<arr2.cards.length;i++)
+            {
+                temp.push({...arr2.cards[i]})
+            }
+            console.log(temp,"temp")
+            setData({type:'2',data:{...arr2,cards:temp}})
     };
+
     const handler4 = () => {
-        setData({type:'4',data:arr4})
-    };
-    const resethandler = () => {
-        if(Data.type == '2')
+        var temp = [];
+        shuffle(arr4.cards);
+        for(var i=0;i<arr4.cards.length;i++)
         {
-            setData({...Data,data:arr2})
+            temp.push({...arr4.cards[i]})
+        }
+        console.log(temp,"temp")
+        setData({type:'4',data:{...arr4,cards:temp}})
+    };
+
+    const resethandler = () => {
+        if(Data.type === '2')
+        {
+            console.log("Here at resethandler")
+            var temp = [];
+            shuffle(arr2.cards);
+            for(var i=0;i<arr2.cards.length;i++)
+            {
+                temp.push({...arr2.cards[i]})
+            }
+            console.log(temp,"temp of reset")
+            setData({type:'2',data:{...arr2,cards:temp}})
         }
         else{
-            setData({...Data,data:arr4})
+            console.log("Here at resethandler")
+            var temp = [];
+            shuffle(arr4.cards);
+            for(var i=0;i<arr4.cards.length;i++)
+            {
+                temp.push({...arr4.cards[i]})
+            }
+            console.log(temp,"temp of reset")
+            setData({type:'4',data:{...arr4,cards:temp}})
         }
     };
+    
     return (
         <CardContext.Provider value={{Data, handler2, handler4, resethandler}}>
             {props.children}
